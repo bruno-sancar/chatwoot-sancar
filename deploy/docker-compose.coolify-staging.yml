@@ -1,23 +1,24 @@
-# Stella Staging — Coolify Service deploy
+# Stella Staging — Coolify paste deploy
 # Repo: sancar-space/chatwoot  Branch: develop
 # Compose file path: deploy/docker-compose.coolify-staging.yml
 #
 # Como usar no Coolify:
 #   New Project → "Stella Staging"
-#   New Resource → Service → Docker Compose → Public GitHub
-#   Repository: sancar-space/chatwoot   Branch: develop
-#   Compose path: deploy/docker-compose.coolify-staging.yml
+#   New Resource → Applications → Docker Compose → Cole este arquivo
 #
 # Após criar o serviço, configure os domínios no Coolify:
 #   rails      → chat.stella.sancar.space      (port 3000)
-#   n8n        → n8n-stella.sancar.space        (port 5678)  [opcional]
-#   evolution  → evolution-stella.sancar.space  (port 8080)
+#   n8n        → n8n.stella.sancar.space        (port 5678)
+#   evolution  → evolution.stella.sancar.space  (port 8080)
 #
 # Variáveis obrigatórias a preencher no Coolify (todas as outras têm default):
 #   FRONTEND_URL, EVOLUTION_URL, N8N_HOST
 #   SECRET_KEY_BASE (min 128 chars), POSTGRES_PASSWORD, REDIS_PASSWORD
 #   N8N_ENCRYPTION_KEY, EVOLUTION_API_KEY
 #   RESEND_API_KEY (opcional — para envio de e-mail)
+#
+# Nota: n8n e Evolution usam schemas separados dentro do banco chatwoot.
+# Não é necessário arquivo init-db.sql — os schemas são criados automaticamente.
 
 services:
   rails:
@@ -111,7 +112,7 @@ services:
       - SERVER_URL=${EVOLUTION_URL}
       - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY}
       - DATABASE_PROVIDER=postgresql
-      - DATABASE_CONNECTION_URI=postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${EVOLUTION_DB_NAME:-evolution}
+      - DATABASE_CONNECTION_URI=postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-chatwoot}?schema=evolution
       - DATABASE_CONNECTION_CLIENT_NAME=evolution_client
       - CACHE_REDIS_ENABLED=true
       - CACHE_REDIS_URI=redis://:${REDIS_PASSWORD}@redis:6379/6
@@ -145,7 +146,8 @@ services:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=${N8N_DB_NAME:-n8n}
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-chatwoot}
+      - DB_POSTGRESDB_SCHEMA=n8n
       - DB_POSTGRESDB_USER=${POSTGRES_USERNAME:-postgres}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
       - EXECUTIONS_PROCESS=main
@@ -156,7 +158,6 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     environment:
       - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
