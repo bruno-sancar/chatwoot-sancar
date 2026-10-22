@@ -176,5 +176,5 @@
   "post_deploy": [
     "docker compose exec rails bundle exec rails db:chatwoot_prepare"
   ],
-  "documentation": "https://github.com/bruno-sancar/chatwoot-sancar/blob/develop/deploy/README.md"
+  "documentation": "https://github.com/sancar-space/chatwoot/blob/develop/deploy/README.md"
 }
