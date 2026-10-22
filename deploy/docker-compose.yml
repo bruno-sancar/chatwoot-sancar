@@ -11,7 +11,7 @@
 version: '3.8'
 
 x-chatwoot-base: &chatwoot-base
-  image: chatwoot/chatwoot:v4.18.0
+  image: chatwoot/chatwoot:v4.19.0
   env_file: .env
   restart: unless-stopped
   depends_on:
