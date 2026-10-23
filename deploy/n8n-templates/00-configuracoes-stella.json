@@ -1,0 +1,812 @@
+{
+  "name": "00. Configurações",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS n8n_historico_mensagens (\n  id           BIGSERIAL PRIMARY KEY,\n  session_id   VARCHAR(40) NOT NULL,\n  message      JSONB NOT NULL,\n  created_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE INDEX IF NOT EXISTS idx_n8n_historico_mensagens_session_id ON n8n_historico_mensagens (session_id);\n\nCREATE TABLE IF NOT EXISTS n8n_fila_mensagens (\n  id           BIGSERIAL PRIMARY KEY,\n  id_mensagem  VARCHAR(40) NOT NULL,\n  telefone     VARCHAR(40) NOT NULL,\n  mensagem     TEXT NOT NULL,\n  \"timestamp\"  TIMESTAMP WITHOUT TIME ZONE NOT NULL\n);\n\nCREATE INDEX IF NOT EXISTS idx_n8n_fila_mensagens_telefone ON n8n_fila_mensagens (telefone);\n\nCREATE TABLE IF NOT EXISTS n8n_status_atendimento (\n  id                   BIGSERIAL PRIMARY KEY,\n  session_id           VARCHAR(40) NOT NULL UNIQUE,\n  lock_conversa        BOOLEAN NOT NULL DEFAULT FALSE,\n  aguardando_followup  BOOLEAN NOT NULL DEFAULT FALSE,\n  numero_followup      INTEGER NOT NULL DEFAULT 0,\n  updated_at           TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE INDEX IF NOT EXISTS idx_n8n_status_atendimento_session_id ON n8n_status_atendimento (session_id);\nCREATE INDEX IF NOT EXISTS idx_n8n_status_atendimento_aguardando_followup ON n8n_status_atendimento (aguardando_followup);\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1728,
+        608
+      ],
+      "id": "bf37f145-a495-4d6f-901a-ec57cf4ff371",
+      "name": "Criar tabelas"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "906c66c6-e855-4c24-ae15-cce828dafb92",
+              "name": "url_chatwoot",
+              "value": "<inserir url do seu chatwoot>",
+              "type": "string"
+            },
+            {
+              "id": "716d83b2-a693-489e-904e-79d77f33d621",
+              "name": "id_conta",
+              "value": "=1",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        1008
+      ],
+      "id": "603c46d4-4103-4655-9160-87d48173b364",
+      "name": "Info"
+    },
+    {
+      "parameters": {
+        "content": "## Configurar node Info!!",
+        "height": 240,
+        "width": 288,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1648,
+        928
+      ],
+      "typeVersion": 1,
+      "id": "8a999563-dfd0-4dbd-a81d-fd5369f55140",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "testando-stella"
+            },
+            {
+              "name": "description",
+              "value": "Habilita o funcionamento da Stella em modo de teste."
+            },
+            {
+              "name": "color",
+              "value": "#39EB08"
+            },
+            {
+              "name": "show_on_sidebar",
+              "value": "={{ true }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2016,
+        912
+      ],
+      "id": "7da9d0a3-64ef-41d3-bea4-de066ae4d44e",
+      "name": "Criar etiqueta testando-stella",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "atendimento-humano"
+            },
+            {
+              "name": "description",
+              "value": "Marca conversa em atendimento humano (pausa a IA Stella)."
+            },
+            {
+              "name": "color",
+              "value": "#FF0000"
+            },
+            {
+              "name": "show_on_sidebar",
+              "value": "={{ true }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        912
+      ],
+      "id": "7fea7b1d-33ae-45fd-9ddf-d628fda80864",
+      "name": "Criar etiqueta atendimento-humano",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/custom_attribute_definitions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "attribute_description",
+              "value": "Indica se o contato prefere comunicação via áudio ou texto."
+            },
+            {
+              "name": "attribute_display_name",
+              "value": "Preferência áudio/texto"
+            },
+            {
+              "name": "attribute_display_type",
+              "value": "={{ 6 }}"
+            },
+            {
+              "name": "attribute_key",
+              "value": "preferencia_audio_texto"
+            },
+            {
+              "name": "attribute_model",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "attribute_values",
+              "value": "={{ \n[\"audio\", \"texto\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2016,
+        1104
+      ],
+      "id": "77b28cb0-d394-4210-a239-19522305c04c",
+      "name": "Cria atributo preferência áudio texto",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/custom_attribute_definitions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "attribute_description",
+              "value": "ID do cliente no Asaas."
+            },
+            {
+              "name": "attribute_display_name",
+              "value": "ID cliente - Asaas"
+            },
+            {
+              "name": "attribute_display_type",
+              "value": "={{ 0 }}"
+            },
+            {
+              "name": "attribute_key",
+              "value": "asaas_id_cliente"
+            },
+            {
+              "name": "attribute_model",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "attribute_values",
+              "value": "={{ \n[] }}"
+            },
+            {
+              "name": "regex_pattern",
+              "value": "/^cus_/"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        1104
+      ],
+      "id": "c7b8d75a-c3f3-4a55-b362-8f2d987df867",
+      "name": "Cria atributo Asaas ID cliente",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/custom_attribute_definitions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "attribute_description",
+              "value": "ID da cobrança no Asaas."
+            },
+            {
+              "name": "attribute_display_name",
+              "value": "ID cobrança - Asaas"
+            },
+            {
+              "name": "attribute_display_type",
+              "value": "={{ 0 }}"
+            },
+            {
+              "name": "attribute_key",
+              "value": "asaas_id_cobranca"
+            },
+            {
+              "name": "attribute_model",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "attribute_values",
+              "value": "={{ \n[] }}"
+            },
+            {
+              "name": "regex_pattern",
+              "value": "/^pay_/"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        1104
+      ],
+      "id": "0ea63d18-b0ea-4077-9ca6-8d1b409b8413",
+      "name": "Cria atributo Asaas ID cobrança",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/custom_attribute_definitions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "attribute_description",
+              "value": "Status da cobrança no Asaas."
+            },
+            {
+              "name": "attribute_display_name",
+              "value": "Status cobrança - Asaas"
+            },
+            {
+              "name": "attribute_display_type",
+              "value": "={{ 6 }}"
+            },
+            {
+              "name": "attribute_key",
+              "value": "asaas_status_cobranca"
+            },
+            {
+              "name": "attribute_model",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "attribute_values",
+              "value": "={{ [\n  \"Pendente\",\n  \"Cobrança recebida\",\n  \"Cobrança confirmada\",\n  \"Cobrança vencida\",\n  \"Cobrança estornada\",\n  \"Cobrança recebida em dinheiro\",\n  \"Solicitação de estorno\",\n  \"Estorno em andamento\",\n  \"Recebido chargeback\",\n  \"Em disputa de chargeback\",\n  \"Disputa vencida\",\n  \"Requisição de negativação\",\n  \"Recebimento de negativação\",\n  \"Aguardando análise de risco\"\n] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2592,
+        1104
+      ],
+      "id": "5690897b-0102-4179-916a-b5549c01564b",
+      "name": "Cria atributo Asaas status cobrança",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        1008
+      ],
+      "id": "c88367b2-fa85-4c83-9c9e-ca0040303138",
+      "name": "Rodar configuração"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "gestor"
+            },
+            {
+              "name": "description",
+              "value": "Gestores com acesso ao assistente interno."
+            },
+            {
+              "name": "color",
+              "value": "#1D405B"
+            },
+            {
+              "name": "show_on_sidebar",
+              "value": "={{ true }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        912
+      ],
+      "id": "9c82d7b0-ae02-4241-8cc5-66c9ed54340f",
+      "name": "Criar etiqueta gestor",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/custom_attribute_definitions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "attribute_description",
+              "value": "Usuário permitiu receber ligações pelo WhatsApp. **NÃO ALTERAR MANUALMENTE**"
+            },
+            {
+              "name": "attribute_display_name",
+              "value": "Permitir chamadas WhatsApp"
+            },
+            {
+              "name": "attribute_display_type",
+              "value": "=checkbox"
+            },
+            {
+              "name": "attribute_key",
+              "value": "permitir_chamadas_whatsapp"
+            },
+            {
+              "name": "attribute_model",
+              "value": "=contact_attribute"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        1104
+      ],
+      "id": "dfbffdea-df30-4ce0-8889-28447a898acd",
+      "name": "Cria atributo permitir chamadas",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://content.twilio.com/v1/Content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twilioApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"friendly_name\": \"voice_call_request\",\n    \"language\": \"pt_BR\",     \n    \"types\": {\n      \"twilio/call-to-action\": {\n        \"body\":\"Permitir receber ligações.\",         \n        \"actions\": [\n          {             \n            \"type\": \"VOICE_CALL_REQUEST\",\n            \"title\": \"Aceitar ligações\" \n          }         \n        ]       \n    }     \n  } \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        1440
+      ],
+      "id": "48678201-6459-42ff-b25f-9b75dba9650a",
+      "name": "Criar template de ligações",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Twilio\n\nPara essas configurações, é necessário criar conta no Twilio, que pode ser feito depois.\nDepois de criada a conta, selecionar os nodes e apertar \"D\" para habilitá-los, e executar o workflow novamente.",
+        "height": 368,
+        "width": 816,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1616,
+        1296
+      ],
+      "typeVersion": 1,
+      "id": "833be7cb-ab8c-427c-b669-89f82eb31062",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "url": "https://content.twilio.com/v1/Content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twilioApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1744,
+        1440
+      ],
+      "id": "6f9ecbbc-6a56-439e-bcfc-52764f7ba979",
+      "name": "Buscar template de ligações",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7b97ffe9-0b20-4321-9693-8f6543f5e009",
+              "leftValue": "={{ $('Buscar template de ligações').item.json.contents.find(c => c.friendly_name === 'voice_call_request') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1952,
+        1440
+      ],
+      "id": "914040c8-d42e-439f-96db-5a15a2ee4c5f",
+      "name": "Template já criado?",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Chatwoot",
+        "height": 448,
+        "width": 1360,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1616,
+        832
+      ],
+      "typeVersion": 1,
+      "id": "db398a34-454d-4108-b507-a535401d1d08",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Postgres",
+        "height": 304,
+        "width": 352,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1616,
+        512
+      ],
+      "typeVersion": 1,
+      "id": "da33066c-b347-4019-8eb0-85e49e950972",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Checklist - Twilio\nA configuração do Twilio pode ser feita posteriormente. Após criar a conta no Twilio, selecione e ative os nodes antes de executar o workflow.\n\nBasta selecionar os nodes, apertar \"D\" para reativá-los, e executar o workflow novamente.\n\n- [ ] Acessar \"Account Dashboard\", e ir na seção \"Account Info\"\n- [ ] Criar credencial no n8n, com o \"Account SID\" e \"Auth Token\" disponíveis nessa seção do Twilio\n- [ ] Abrir cada node do Twilio para selecionar a nova credencial",
+        "height": 288,
+        "width": 592,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        1344
+      ],
+      "id": "8969e785-0293-4ba3-8adf-85b410e253d2",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## 00. Configurações",
+        "height": 80,
+        "width": 288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -48
+      ],
+      "id": "944f8fc4-3e66-42ff-88cc-a988a462c7cf",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# Checklist - Postgres\n- [ ] Criar serviço PostgreSQL no Coolify\n- [ ] Marcar serviço como \"publicly available\" na porta 5432\n- [ ] Criar credencial no n8n, copiando informações do Coolify\n",
+        "height": 192,
+        "width": 432,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        560
+      ],
+      "id": "14ce8362-c56f-4bbc-ba97-5a57eea858b1",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# Checklist - Chatwoot\n- [ ] Configurar node \"Info\" com a URL do seu Chatwoot e o ID da conta\n- [ ] Instalar community node `@devlikeapro/n8n-nodes-chatwoot`\n- [ ] Aproveitar para instalar community node do ElevenLabs: `@elevenlabs/n8n-nodes-elevenlabs`\n- [ ] Criar credencial no n8n, com token de acesso disponível nas \"Configurações de perfil\" no Chatwoot\n- [ ] Abrir cada node do Chatwoot para selecionar a nova credencial\n",
+        "height": 288,
+        "width": 512,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        768
+      ],
+      "id": "034b7e46-0e1c-44b6-a69e-ed992af9fdf8",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![Vídeo YouTube Stella](https://i1.ytimg.com/vi_webp/U3Qx-ayR7To/maxresdefault.webp)](https://www.youtube.com/watch?v=U3Qx-ayR7To)",
+        "height": 440,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        48
+      ],
+      "id": "e4de59d9-497f-440d-aea5-73988eb569ff",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## [Clique aqui e entre agora para tirar suas dúvidas](https://lucasmoreira.Sancar)\n[![Banner comunidade](https://framerusercontent.com/images/KIXMxk9eKCoCsNeVm1oaz5HnaQ.png)](https://lucasmoreira.Sancar)",
+        "height": 440,
+        "width": 1380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        48
+      ],
+      "id": "3abab81c-d7d8-4868-8e70-fb9de0488cc6",
+      "name": "Sticky Note36"
+    },
+    {
+      "parameters": {
+        "content": "@[youtube](O7xbn8l2WJk)",
+        "height": 224,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        1296
+      ],
+      "id": "290f22af-4336-4bfe-861f-849590ad3e57",
+      "name": "Sticky Note33"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Info": {
+      "main": [
+        [
+          {
+            "node": "Criar etiqueta testando-agente",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cria atributo preferência áudio texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria atributo preferência áudio texto": {
+      "main": [
+        [
+          {
+            "node": "Cria atributo Asaas ID cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria atributo Asaas ID cliente": {
+      "main": [
+        [
+          {
+            "node": "Cria atributo Asaas ID cobrança",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria atributo Asaas ID cobrança": {
+      "main": [
+        [
+          {
+            "node": "Cria atributo Asaas status cobrança",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria atributo Asaas status cobrança": {
+      "main": [
+        [
+          {
+            "node": "Cria atributo permitir chamadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rodar configuração": {
+      "main": [
+        [
+          {
+            "node": "Criar tabelas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar template de ligações",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar template de ligações": {
+      "main": [
+        [
+          {
+            "node": "Template já criado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Template já criado?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Criar template de ligações",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar etiqueta atendimento-humano": {
+      "main": [
+        [
+          {
+            "node": "Criar etiqueta gestor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar etiqueta testando-stella": {
+      "main": [
+        [
+          {
+            "node": "Criar etiqueta agente-off",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7d2c422d-2fe9-4f3f-80df-51fa2f2a0c85",
+  "meta": {
+    "instanceId": "stella-sancar-03b78ecb2f174b44"
+  },
+  "id": "aoICalzsEfKIcJ7R",
+  "tags": []
+}

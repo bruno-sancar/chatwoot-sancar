@@ -1,0 +1,160 @@
+{
+  "name": "04.1 [EXTRA] Atualizar agendamento",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id_agenda"
+            },
+            {
+              "name": "id_evento"
+            },
+            {
+              "name": "titulo"
+            },
+            {
+              "name": "descricao"
+            }
+          ]
+        }
+      },
+      "id": "98e3e203-7817-415c-9844-bceed2533644",
+      "typeVersion": 1.1,
+      "name": "Gatilho",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1248,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $('Gatilho').item.json.id_agenda }}",
+          "mode": "id"
+        },
+        "eventId": "={{ $('Gatilho').item.json.id_evento }}",
+        "updateFields": {
+          "description": "={{ $('Gatilho').item.json.descricao }}",
+          "summary": "={{ $('Gatilho').item.json.titulo }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1488,
+        544
+      ],
+      "id": "5011698f-3933-4f37-bdcd-2ef1765e20f3",
+      "name": "Atualizar agendamento"
+    },
+    {
+      "parameters": {
+        "content": "## Importante!\n\nDevido a um bug no n8n, a ferramenta de atualização de eventos no Google Calendar não está funcionando corretamente.\n\nAté que a ferramenta seja corrigida, disponibilizamos esse subworkflow para que a Stella ainda tenha acesso à essa funcionalidade.",
+        "height": 272,
+        "width": 368,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        432
+      ],
+      "id": "fb688cf1-d66d-4773-9a0c-fee326858cef",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 04.1 [EXTRA] Atualizar agendamento",
+        "height": 80,
+        "width": 512,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -128
+      ],
+      "id": "b058db0f-5be3-4fc1-bfb3-424480f0267b",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![Vídeo YouTube Stella](https://i1.ytimg.com/vi_webp/U3Qx-ayR7To/maxresdefault.webp)](https://www.youtube.com/watch?v=U3Qx-ayR7To)",
+        "height": 440,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        -32
+      ],
+      "id": "61f03d31-8c67-42aa-af27-46d0dfc4c6de",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## [Clique aqui e entre agora para tirar suas dúvidas](https://lucasmoreira.Sancar)\n[![Banner comunidade](https://framerusercontent.com/images/KIXMxk9eKCoCsNeVm1oaz5HnaQ.png)](https://lucasmoreira.Sancar)",
+        "height": 440,
+        "width": 1380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        -32
+      ],
+      "id": "d7932239-eb61-43f7-8264-21642a79f6b6",
+      "name": "Sticky Note36"
+    },
+    {
+      "parameters": {
+        "content": "@[youtube](jBryD3-kjUw)",
+        "height": 224,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        432
+      ],
+      "id": "29570a6c-5eb1-40b2-8971-009807e50a04",
+      "name": "Sticky Note17"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gatilho": {
+      "main": [
+        [
+          {
+            "node": "Atualizar agendamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5ed0c28d-4d62-40e7-abbf-7a1a5e6ae3e5",
+  "meta": {
+    "instanceId": "stella-sancar-03b78ecb2f174b44"
+  },
+  "id": "5exsHaW0BoEFf19x",
+  "tags": []
+}

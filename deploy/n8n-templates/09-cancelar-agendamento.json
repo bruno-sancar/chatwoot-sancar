@@ -1,0 +1,439 @@
+{
+  "name": "09. Desmarcar e enviar alerta",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "telefone"
+            },
+            {
+              "name": "mensagem"
+            },
+            {
+              "name": "id_agenda"
+            },
+            {
+              "name": "id_evento"
+            },
+            {
+              "name": "id_conta"
+            },
+            {
+              "name": "id_inbox"
+            },
+            {
+              "name": "url_chatwoot"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        512
+      ],
+      "id": "93a3c3e4-2e02-4f6e-b14e-6b9da9e398bd",
+      "name": "Gatilho"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gatilho').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Gatilho').item.json.id_conta }}/conversations/{{ $('Buscar contato').item.json.conversa.id }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ $('Gatilho').item.json.mensagem }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        512
+      ],
+      "id": "e8f73541-c32b-4704-825d-12ee3f5e491a",
+      "name": "Enviar alerta"
+    },
+    {
+      "parameters": {
+        "content": "# Checklist\n- [ ] \"Buscar contato\" -> Subworkflow 10\n- [ ] Abrir nodes do Google Calendar e Chatwoot para selecionar credenciais",
+        "width": 352,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        976,
+        672
+      ],
+      "id": "59979551-748d-4f62-9aa9-a08d950d6c85",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## 09. Desmarcar e enviar alerta",
+        "height": 80,
+        "width": 384,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -192
+      ],
+      "id": "ddd7ae66-3469-49a8-b6fd-1bb0173e8750",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Deletar evento",
+        "height": 272,
+        "width": 416,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        688,
+        416
+      ],
+      "typeVersion": 1,
+      "id": "ffdc36b0-d26c-4559-979a-3e586b0e014e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $('Gatilho').item.json.id_agenda }}",
+          "mode": "id"
+        },
+        "eventId": "={{ $('Gatilho').item.json.id_evento }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        944,
+        512
+      ],
+      "id": "943739e7-b483-4bf8-be85-22c772c96e03",
+      "name": "Desmarcar agendamento"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "B3uXPbfJAnhFWXXx",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/B3uXPbfJAnhFWXXx",
+          "cachedResultName": "<selecionar ou criar subworkflow 10. Buscar ou criar contato + conversa>"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Gatilho').item.json.telefone }}",
+            "id_conta": "={{ $('Gatilho').item.json.id_conta }}",
+            "id_inbox": "={{ $('Gatilho').item.json.id_inbox }}",
+            "url_chatwoot": "={{ $('Gatilho').item.json.url_chatwoot }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "id_conta",
+              "displayName": "id_conta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "id_inbox",
+              "displayName": "id_inbox",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_chatwoot",
+              "displayName": "url_chatwoot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        512
+      ],
+      "id": "0ee45cc4-9e05-449d-b06f-0fbdd0bb66af",
+      "name": "Buscar contato"
+    },
+    {
+      "parameters": {
+        "content": "## Enviar alerta e salvar na memória da Secretária",
+        "height": 272,
+        "width": 816,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        416
+      ],
+      "typeVersion": 1,
+      "id": "c976685c-f62f-4d5d-a945-ecc3a0570129",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7aefcd2b-a8da-428a-8a99-4d516b56b685",
+              "name": "resultado",
+              "value": "ok",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1792,
+        512
+      ],
+      "id": "b1a62847-7190-4eb7-a62b-b85811258605",
+      "name": "Resultado"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_historico_mensagens",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Gatilho').item.json.telefone }}",
+            "message": "={\n  \"type\": \"ai\",\n  \"content\": \"{{ $('Gatilho').item.json.mensagem.replace('\"', '\\\\\"') }}\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1584,
+        512
+      ],
+      "id": "7ef06e02-e64a-4faf-a7fc-0f503b7dcd0e",
+      "name": "Salvar memória Secretária"
+    },
+    {
+      "parameters": {
+        "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![Vídeo YouTube Stella](https://i1.ytimg.com/vi_webp/U3Qx-ayR7To/maxresdefault.webp)](https://www.youtube.com/watch?v=U3Qx-ayR7To)",
+        "height": 440,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        576,
+        -96
+      ],
+      "id": "c69cd120-f62c-4419-b6be-01826e3d2653",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## [Clique aqui e entre agora para tirar suas dúvidas](https://lucasmoreira.Sancar)\n[![Banner comunidade](https://framerusercontent.com/images/KIXMxk9eKCoCsNeVm1oaz5HnaQ.png)](https://lucasmoreira.Sancar)",
+        "height": 440,
+        "width": 1380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        -96
+      ],
+      "id": "78b83be6-8dc7-4c0b-88e7-cb22d57d1bef",
+      "name": "Sticky Note36"
+    },
+    {
+      "parameters": {
+        "content": "@[youtube](HR03bdNL02s)",
+        "height": 224,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        416
+      ],
+      "id": "c1cbcba5-4bba-4a7e-b2c0-487aa5c91ca1",
+      "name": "Sticky Note17"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gatilho": {
+      "main": [
+        [
+          {
+            "node": "Desmarcar agendamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar alerta": {
+      "main": [
+        [
+          {
+            "node": "Salvar memória Secretária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desmarcar agendamento": {
+      "main": [
+        [
+          {
+            "node": "Buscar contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar contato": {
+      "main": [
+        [
+          {
+            "node": "Enviar alerta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar memória Secretária": {
+      "main": [
+        [
+          {
+            "node": "Resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "71906e59-f613-474f-ab1b-e5c425367260",
+  "meta": {
+    "instanceId": "stella-sancar-03b78ecb2f174b44"
+  },
+  "id": "wx0eYrQG912ELrJW",
+  "tags": []
+}

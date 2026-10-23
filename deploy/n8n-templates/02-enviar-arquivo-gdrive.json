@@ -1,0 +1,245 @@
+{
+  "name": "02. Baixar e enviar arquivo do Google Drive",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.file_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        992,
+        576
+      ],
+      "id": "3c816ff9-5ef7-4377-a00d-31802264bb76",
+      "name": "Baixar arquivo"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "71dda3d7-4505-4d03-b70f-63f5c005c0c3",
+              "name": "resultado",
+              "value": "=ok",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        576
+      ],
+      "id": "29e13bc0-103c-4455-9681-539f936a3f33",
+      "name": "Output"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gatilho').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Gatilho').item.json.id_conta }}/conversations/{{ $('Gatilho').item.json.id_conversa }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "attachments[]",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        576
+      ],
+      "id": "97a803e4-8133-4e6b-b752-c0b4fbdb51d6",
+      "name": "Enviar arquivo"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "file_id"
+            },
+            {
+              "name": "id_conta"
+            },
+            {
+              "name": "id_conversa"
+            },
+            {
+              "name": "url_chatwoot"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        576
+      ],
+      "id": "10c00539-769c-400f-ba45-04554732c77b",
+      "name": "Gatilho"
+    },
+    {
+      "parameters": {
+        "content": "# Checklist\n- [ ] Abrir nodes do Google Drive e Chatwoot para selecionar credenciais",
+        "height": 128,
+        "width": 512,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        464
+      ],
+      "id": "74fa0aa2-c0b3-4a8a-9a11-a5b3e56671a1",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## 02. Baixar e enviar arquivo do Google Drive",
+        "height": 80,
+        "width": 544,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -144
+      ],
+      "id": "3db8fccc-2829-4158-a856-5f02bc0561c4",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Baixar e enviar arquivo",
+        "height": 276,
+        "width": 876,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        720,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "2208d182-460c-4763-a0f9-77b6fa46b790",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![Vídeo YouTube Stella](https://i1.ytimg.com/vi_webp/U3Qx-ayR7To/maxresdefault.webp)](https://www.youtube.com/watch?v=U3Qx-ayR7To)",
+        "height": 440,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -48
+      ],
+      "id": "66127e54-c7d8-4b62-adce-66feb6239456",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## [Clique aqui e entre agora para tirar suas dúvidas](https://lucasmoreira.Sancar)\n[![Banner comunidade](https://framerusercontent.com/images/KIXMxk9eKCoCsNeVm1oaz5HnaQ.png)](https://lucasmoreira.Sancar)",
+        "height": 440,
+        "width": 1380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -48
+      ],
+      "id": "e97a58c8-3119-47db-92a1-766ca1b89d8a",
+      "name": "Sticky Note36"
+    },
+    {
+      "parameters": {
+        "content": "@[youtube](E--khfPbOOc)",
+        "height": 224,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        784
+      ],
+      "id": "9da42db6-63af-4917-955a-296d1d4fbfe1",
+      "name": "Sticky Note17"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Baixar arquivo": {
+      "main": [
+        [
+          {
+            "node": "Enviar arquivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar arquivo": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gatilho": {
+      "main": [
+        [
+          {
+            "node": "Baixar arquivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "79322b7e-3029-41db-b2ef-bf82e213ce10",
+  "meta": {
+    "instanceId": "stella-sancar-03b78ecb2f174b44"
+  },
+  "id": "MFXApBA4w1nNQv2Y",
+  "tags": []
+}

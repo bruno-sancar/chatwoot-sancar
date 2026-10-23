@@ -1,0 +1,347 @@
+{
+  "name": "05.1 [EXTRA] Escalar humano - Multi-alerta",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $('Gatilho').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Gatilho').item.json.id_conta }}/conversations/{{ $('Gatilho').item.json.id_conversa }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        688
+      ],
+      "id": "9f3e9e7d-5643-4cde-a8a2-41aa5cccc9f3",
+      "name": "Listar etiquetas da conversa"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "telefone"
+            },
+            {
+              "name": "nome"
+            },
+            {
+              "name": "ultima_mensagem"
+            },
+            {
+              "name": "resumo_conversa"
+            },
+            {
+              "name": "id_conta"
+            },
+            {
+              "name": "id_conversa"
+            },
+            {
+              "name": "url_chatwoot"
+            },
+            {
+              "name": "id_conversa_alerta"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        688
+      ],
+      "id": "68f86131-99bd-4a9f-a269-35962658baaa",
+      "name": "Gatilho"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gatilho').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Gatilho').item.json.id_conta }}/conversations/{{ $json.id_conversa_alerta }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "=Assistente desabilitado para o usuário {{ $('Gatilho').item.json.nome || '(usuário não cadastrado)' }} ({{ $('Gatilho').item.json.telefone }}).\n\n*Última mensagem*:\n\n\"{{ $('Gatilho').item.json.ultima_mensagem }}\"\n\n*Resumo da conversa*:\n\n\"{{ $('Gatilho').item.json.resumo_conversa }}\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        688
+      ],
+      "id": "fa672c67-e991-4848-b75f-3ac4bdf4d888",
+      "name": "Enviar alerta",
+      "executeOnce": false,
+      "credentials": {
+        "chatwootApi": {}
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b51e260-d4ab-4748-82b0-f8012c3f3c70",
+              "leftValue": "={{ $('Gatilho').item.json.id_conversa_alerta }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        688
+      ],
+      "id": "0f3e3457-7050-4959-a204-322908801ca0",
+      "name": "Conversa de alerta configurada?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        848
+      ],
+      "id": "74cae9b2-3156-4fc5-a3ce-ef96124eae2b",
+      "name": "Alerta não configurado"
+    },
+    {
+      "parameters": {
+        "content": "# Checklist\n- [ ] Abrir nodes do Chatwoot para selecionar credencial",
+        "height": 128,
+        "width": 400,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        912
+      ],
+      "id": "56e19386-d2e8-484e-b6b5-907ad601da33",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## 05.1 [EXTRA] Escalar humano - Multi-alerta",
+        "height": 80,
+        "width": 544,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -32
+      ],
+      "id": "7ae2073f-f4bf-4f86-a630-193b711ac799",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Gatilho').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Gatilho').item.json.id_conta }}/conversations/{{ $('Gatilho').item.json.id_conversa }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "chatwootApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "labels",
+              "value": "={{ $json.payload.append('agente-off').unique() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        688
+      ],
+      "id": "cc030b9c-bfc5-44ba-bb1c-d52b928a8b3e",
+      "name": "Colocar etiqueta agente-off"
+    },
+    {
+      "parameters": {
+        "content": "## Colocar etiqueta e enviar alerta",
+        "height": 416,
+        "width": 1248,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1136,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "5d7f1b9e-0825-4e3f-a4bf-569cc73df7e2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![Vídeo YouTube Stella](https://i1.ytimg.com/vi_webp/U3Qx-ayR7To/maxresdefault.webp)](https://www.youtube.com/watch?v=U3Qx-ayR7To)",
+        "height": 440,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        928,
+        64
+      ],
+      "id": "6157ee91-b5ef-4003-abee-0b3fb5b24695",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## [Clique aqui e entre agora para tirar suas dúvidas](https://lucasmoreira.Sancar)\n[![Banner comunidade](https://framerusercontent.com/images/KIXMxk9eKCoCsNeVm1oaz5HnaQ.png)](https://lucasmoreira.Sancar)",
+        "height": 440,
+        "width": 1380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        64
+      ],
+      "id": "39a2548f-4603-435e-87b8-80cb022c67d8",
+      "name": "Sticky Note36"
+    },
+    {
+      "parameters": {
+        "content": "@[youtube](Vv_uQGehgIc)",
+        "height": 224,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        592
+      ],
+      "id": "2f20b704-c661-4a7e-89bf-49af9b89c1b8",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id_conversa_alerta",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        688
+      ],
+      "id": "8cba1bf2-f9b4-4385-9da6-601875fb80f2",
+      "name": "Split"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Listar etiquetas da conversa": {
+      "main": [
+        [
+          {
+            "node": "Colocar etiqueta agente-off",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gatilho": {
+      "main": [
+        [
+          {
+            "node": "Listar etiquetas da conversa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversa de alerta configurada?": {
+      "main": [
+        [
+          {
+            "node": "Split",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta não configurado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Colocar etiqueta agente-off": {
+      "main": [
+        [
+          {
+            "node": "Conversa de alerta configurada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split": {
+      "main": [
+        [
+          {
+            "node": "Enviar alerta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "43920254-2e1b-4875-abe1-85d23e8b4493",
+  "meta": {
+    "instanceId": "stella-sancar-03b78ecb2f174b44"
+  },
+  "id": "LEGXyfhjmUhFV8bS",
+  "tags": []
+}
