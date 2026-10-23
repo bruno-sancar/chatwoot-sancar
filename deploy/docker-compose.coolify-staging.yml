@@ -7,8 +7,8 @@
 #   New Resource → Applications → Docker Compose → Cole este arquivo
 #
 # Após criar o serviço, configure os domínios no Coolify:
-#   rails       → chatwoot-stella.sancar.space   (port 3000)
-#   n8n         → n8n.stella.sancar.space         (port 5678)
+#   rails       → chat.stella.sancar.space   (port 3000)
+#   n8n         → n8n.stella.sancar.space     (port 5678)
 #
 # Variáveis obrigatórias a preencher no Coolify (as SERVICE_* são geradas automaticamente):
 #   FRONTEND_URL, N8N_HOST
